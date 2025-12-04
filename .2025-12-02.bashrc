@@ -15,10 +15,6 @@ export EDITOR=nvim
 export VISUAL=nvim
 export BROWSER=w3m
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
 alias la='ls -la'
 alias ll='ls -lah'
 alias ..='cd ..'     # Move up one directory[web:22]
@@ -50,7 +46,6 @@ alias ng="n ~/General"
 alias gs='git status'
 alias ga='git add .'
 alias gc='git commit -m'
-alias gcl='git clone'
 alias gp='git push origin HEAD'
 alias gpr='git pull --rebase'
 alias gcm='git commit -m'
@@ -78,3 +73,4 @@ nvc() {
 eval "$(zoxide init bash)"
 #export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always {} | head -100'"bind '"C-f": " C-a fzf "'  # Example mapping Ctrl-F to launch fzf
 PATH=$PATH:/data/data/com.termux/files/home/.local/bin
+eval $(~/.local/bin/mise activate)
