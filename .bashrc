@@ -1,80 +1,37 @@
-PS1="\[\e[0;32m\]\w\[\e[0m\] \[\e[0;97m\] 
-\$ \[\e[0m\]"
-HISTSIZE=10000
-HISTFILESIZE=1000000
-shopt -s histappend
-shopt -s autocd # Change directory
 
-# On every prompt: append, clear in‑memory history, reload from file
-PROMPT_COMMAND="history -a; history -c; history -r${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
-
-export PATH=/data/data/com.termux/files/home/bin:/data/data/com.termux/files/usr/bin:~/.local/bin
-export PATH="$PATH:~/p/bash"
-export PATH="$PATH:/data/data/com.termux/files/home/.cargo/bin"
+export PATH="$HOME/.local/bin:$PATH"
 export EDITOR=nvim
 export VISUAL=nvim
-export BROWSER=w3m
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+# Prompt and history (from vukini/bashrc-termux): green path, then `$` on
+# its own line so long paths don't crowd the command on a phone.
+if [[ $- == *i* ]]; then
+  PS1="\[\e[0;32m\]\w\[\e[0m\] \[\e[0;97m\]
+\$ \[\e[0m\]"
+  HISTSIZE=10000
+  HISTFILESIZE=1000000
+  shopt -s histappend
+  shopt -s autocd
+  # On every prompt: append, clear in-memory history, reload from file, so
+  # all open sessions share one history. Guarded so a reload (alias `r`)
+  # doesn't stack it.
+  [[ $PROMPT_COMMAND == *"history -a"* ]] ||
+    PROMPT_COMMAND="history -a; history -c; history -r${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
 
-alias la='ls -la'
-alias ll='ls -lah'
-alias ..='cd ..'     # Move up one directory[web:22]
-alias ...='cd ../..' # Move up two directories[web:22]
-alias c='clear'      # Clear terminal screen[web:25]
-alias h='history'    # Show command history[web:25]
-alias df='df -h'     # Human readable disk usage[web:22]
-alias mkd='mkdir -p' # Human readable disk usage[web:22]
+# fzf: Ctrl-R fuzzy history, Ctrl-T file picker, Alt-C cd (interactive shells only)
+if [[ $- == *i* ]] && command -v fzf >/dev/null 2>&1; then
+  eval "$(fzf --bash)"
+fi
 
-alias ee='emacs'
-alias e='eza'
-alias et='eza --tree'
-alias elt='eza --tree'
-alias elt2='eza --tree --level=2'
-alias el='eza -lh'
-alias r='source ~/.bashrc'
-alias b='nvim ~/.bashrc'
-alias sb='emacs ~/.sbclrc'
-alias cx='chmod +x'
-alias pg='pgrep'
-alias pu='pkg update'
-alias puu='pkg upgrade'
-alias pi='pkg install'
-alias pis='pkg search'
-alias py='python'
-alias n='nvim'
-#alias nl='cd ~/.config/nvim/; nvim init.el'
-alias ng="n ~/General"
-alias gs='git status'
-alias ga='git add .'
-alias gc='git commit -m'
-alias gcl='git clone'
-alias gp='git push origin HEAD'
-alias gpr='git pull --rebase'
-alias gcm='git commit -m'
-alias gst='git status'
-alias gco='git checkout'
+# Aliases and functions carried over from my GitHub dotfiles
+if [[ $- == *i* ]] && [ -r "$HOME/.bash_aliases" ]; then
+  . "$HOME/.bash_aliases"
+fi
 
-alias ..='cd ..'
-alias ...='cd ../..'
-alias cls='clear'
-alias pls='sudo !!'
-alias df='df -h'
-alias topc='top -o %CPU'
-alias psg='ps aux | grep -v grep | grep -i -E'
-alias sbcl='rlwrap sbcl'
-alias rkt='racket'
-alias xo='xdg-open'
-alias to='termux-open'
-alias to='termux-open-url'
+# Private aliases and functions (servers, hosts) live outside any repo.
+[[ -r "$HOME/.bashrc.local" ]] && . "$HOME/.bashrc.local"
 
-nvc() {
-  cd ~/.config/nvim || return
-  nvim init.lua
-}
-
-eval "$(zoxide init bash)"
-#export FZF_CTRL_T_OPTS="--preview 'bat --style=numbers --color=always {} | head -100'"bind '"C-f": " C-a fzf "'  # Example mapping Ctrl-F to launch fzf
-PATH=$PATH:/data/data/com.termux/files/home/.local/bin
+# Said on a reload (alias `r`) only, not in every new terminal.
+[[ $- == *i* && ${_bashrc_loaded-} ]] && echo "Successfully sourced .bashrc"
+_bashrc_loaded=1
