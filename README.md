@@ -43,4 +43,24 @@ nvim   # first start installs the plugins and builds the parsers; give it a few 
 - `clang` also builds the parsers nvim-treesitter installs.
 - `nodejs-lts` is for pyright, which mason installs with npm.
 
+## Emacs
+
+The config is its own repo, [emacs-android](https://github.com/vukini/emacs-android):
+the laptop's [emacs-void](https://github.com/vukini/emacs-void), adapted for a
+terminal-only Emacs on a phone.
+
+```sh
+pkg install emacs sbcl clang nodejs-lts
+npm install -g pyright
+git clone https://github.com/vukini/emacs-android ~/.emacs.d
+emacs   # first start downloads and compiles about forty packages; let it finish
+```
+
+- `sbcl` is for SLIME, `clang` brings `clangd` for C and C++, and `pyright`
+  is the Python server. Emacs starts without them; that language just has no
+  server until its program is installed.
+- Keys a terminal can't send have a second key there: `M-o` for Embark,
+  `M-g c` for avy. The repo's README has the list.
+- The aliases `ee` and `eb` in `.bash_aliases` turn on once `emacs` is installed.
+
 Private aliases (servers, hosts) go in `~/.bashrc.local`, which is not in this repo.
